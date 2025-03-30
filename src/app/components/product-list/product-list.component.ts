@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FakestoreService } from '../../services/fakestore.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
+  imports: [CommonModule]
 })
 export class ProductListComponent implements OnInit {
   products: any[] = [];
