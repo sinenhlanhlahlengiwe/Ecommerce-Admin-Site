@@ -1,0 +1,14 @@
+<div class="product-list">
+    <mat-toolbar color="primary">Product List</mat-toolbar>
+  
+    <div class="products" fxLayout="row" fxLayoutGap="10px" fxLayoutWrap>
+      <mat-card *ngFor="let product of products" class="product-card">
+        <img mat-card-image [src]="product.image" alt="Product Image" />
+        <mat-card-content>
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.price | currency }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  
