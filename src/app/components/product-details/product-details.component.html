@@ -1,1 +1,29 @@
-<p>product-details works!</p>
+<div class="product-details-container">
+  <div class="product-card" *ngIf="product; else loading">
+    <div class="product-header">
+      <h1 class="product-title">{{ product.name }}</h1>
+    </div>
+    
+    <div class="product-content">
+      <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+      
+      <div class="product-info">
+        <p class="price-tag">${{ product.price }}</p>
+        <span class="category-badge">{{ product.category }}</span>
+        
+        <p class="description">{{ product.description }}</p>
+        
+        <div class="action-buttons">
+          <button class="edit-button" (click)="onEdit()">Edit Product</button>
+          <button class="delete-button" (click)="onDelete()">Delete Product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #loading>
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
+</div>

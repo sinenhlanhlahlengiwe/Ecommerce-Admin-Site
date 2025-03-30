@@ -1,1 +1,93 @@
-<p>user-list works!</p>
+<div class="user-list-container">
+  <div class="content-wrapper">
+    <div class="header-section">
+      <h1>User Management</h1>
+    </div>
+
+    <div class="search-section">
+      <input
+        type="text"
+        class="search-field"
+        placeholder="Search users..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+      >
+    </div>
+
+    <div *ngIf="users?.length; else loading">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="user-row" *ngFor="let user of filteredUsers">
+            <td>
+              <div style="display: flex; align-items: center;">
+                <img
+                  [src]="user.avatarUrl || 'assets/default-avatar.png'"
+                  [alt]="user.name"
+                  class="user-avatar"
+                >
+                <span class="user-name">{{ user.name }}</span>
+              </div>
+            </td>
+            <td class="user-email">{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <span
+                class="status-badge"
+                [class.status-active]="user.isActive"
+                [class.status-inactive]="!user.isActive"
+              >
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="edit-button" (click)="onEdit(user)">Edit</button>
+                <button class="delete-button" (click)="onDelete(user)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button
+          class="page-button"
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)"
+        >
+          Previous
+        </button>
+        <button
+          *ngFor="let page of pages"
+          class="page-button"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="page-button"
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+    </ng-template>
+  </div>
+</div>

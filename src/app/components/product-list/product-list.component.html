@@ -1,14 +1,47 @@
 <div class="product-list">
-    <mat-toolbar color="primary">Product List</mat-toolbar>
-  
-    <div class="products" fxLayout="row" fxLayoutGap="10px" fxLayoutWrap>
-      <mat-card *ngFor="let product of products" class="product-card">
-        <img mat-card-image [src]="product.image" alt="Product Image" />
-        <mat-card-content>
-          <h3>{{ product.title }}</h3>
-          <p>{{ product.price | currency }}</p>
-        </mat-card-content>
-      </mat-card>
+  <div class="header-section">
+    <h1>Products</h1>
+    <div class="actions">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search products</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (keyup)="searchProducts()" placeholder="Search by name or description">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-fab color="accent" (click)="addProduct()" class="add-button">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
   </div>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="products-grid" *ngIf="!loading">
+    <mat-card *ngFor="let product of filteredProducts" class="product-card">
+      <img mat-card-image [src]="product.image" [alt]="product.title" class="product-image" />
+      <mat-card-content>
+        <h3 class="product-title">{{ product.title }}</h3>
+        <p class="product-price">{{ product.price | currency }}</p>
+        <p class="product-category">{{ product.category }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-icon-button color="primary" (click)="viewProduct(product.id)" matTooltip="View Details">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="editProduct(product.id)" matTooltip="Edit Product">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteProduct(product.id)" matTooltip="Delete Product">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="no-products" *ngIf="!loading && filteredProducts.length === 0">
+    <mat-icon>sentiment_dissatisfied</mat-icon>
+    <p>No products found</p>
+  </div>
+</div>
   
