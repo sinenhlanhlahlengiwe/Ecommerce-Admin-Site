@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FakestoreService } from '../../services/fakestore.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 interface Product {
   id: number;
@@ -18,7 +19,7 @@ interface Product {
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatProgressSpinnerModule],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css'
 })
@@ -29,6 +30,7 @@ export class ProductDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fakestoreService: FakestoreService
   ) {}
 
@@ -48,9 +50,11 @@ export class ProductDetailsComponent implements OnInit {
           name: data.title,
           imageUrl: data.image,
           description: data.description,
-          price: data.price
+          price: data.price,
+          category: data.category || 'Uncategorized',
+          inStock: true
         };
-        this.selectedImage = this.product.imageUrl;
+        this.selectedImage = this.product?.imageUrl || '';
       },
       error: (error) => {
         console.error('Error loading product:', error);
@@ -71,7 +75,6 @@ export class ProductDetailsComponent implements OnInit {
     if (this.product?.id) {
       this.fakestoreService.deleteProduct(this.product.id).subscribe({
         next: () => {
-          // Navigate back to products list after successful deletion
           this.router.navigate(['/products']);
         },
         error: (error) => {

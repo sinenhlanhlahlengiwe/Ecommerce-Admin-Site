@@ -7,8 +7,8 @@ import { AddEditProductComponent } from './components/add-edit-product/add-edit-
 import { UserListComponent } from './components/user-list/user-list.component';
 import { AuthGuard } from './guards/auth.guard';
 
-const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+export const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { 
     path: 'dashboard',
@@ -19,10 +19,10 @@ const routes: Routes = [
       { path: 'products/:id', component: ProductDetailsComponent },
       { path: 'add-product', component: AddEditProductComponent },
       { path: 'edit-product/:id', component: AddEditProductComponent },
-      { path: 'users', component: UserListComponent },
+      { path: 'users', component: UserListComponent }
     ]
   },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({
