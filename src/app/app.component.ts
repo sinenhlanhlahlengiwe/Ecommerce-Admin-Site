@@ -28,7 +28,7 @@ export class AppComponent implements OnDestroy {
   @ViewChild('snav') sidenav!: MatSidenav;
   mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
-  title = 'Boutique Admin';
+  title = 'TechStyle Boutique Admin';
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,

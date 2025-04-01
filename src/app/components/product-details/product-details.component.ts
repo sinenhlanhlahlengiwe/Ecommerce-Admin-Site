@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FakestoreService } from '../../services/fakestore.service';
+import { StorageService } from '../../services/storage.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 interface Product {
@@ -31,10 +32,16 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fakestoreService: FakestoreService
+    private fakestoreService: FakestoreService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
+    if (!this.storageService.getItem('token')) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.loadProduct(+params['id']);
@@ -50,7 +57,7 @@ export class ProductDetailsComponent implements OnInit {
           name: data.title,
           imageUrl: data.image,
           description: data.description,
-          price: data.price,
+          price: data.price * 18.5, // Converting USD to ZAR (approximate rate)
           category: data.category || 'Uncategorized',
           inStock: true
         };
