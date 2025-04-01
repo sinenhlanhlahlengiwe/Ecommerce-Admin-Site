@@ -1,4 +1,5 @@
 import { Component, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { StorageService } from './services/storage.service';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -32,7 +33,8 @@ export class AppComponent implements OnDestroy {
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    public router: Router
+    public router: Router,
+    private storageService: StorageService
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -40,7 +42,7 @@ export class AppComponent implements OnDestroy {
   }
 
   isLoggedIn(): boolean {
-    return localStorage.getItem('token') !== null;
+    return this.storageService.getItem('token') !== null;
   }
 
   ngOnDestroy(): void {

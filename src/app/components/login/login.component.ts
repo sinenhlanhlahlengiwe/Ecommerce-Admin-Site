@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FakestoreService } from '../../services/fakestore.service';
+import { StorageService } from '../../services/storage.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,14 +28,18 @@ export class LoginComponent {
   username = '';
   password = '';
 
-  constructor(private fakestoreService: FakestoreService, private router: Router) {}
+  constructor(
+    private fakestoreService: FakestoreService,
+    private router: Router,
+    private storageService: StorageService
+  ) {}
 
   login() {
     this.fakestoreService
       .login({ username: this.username, password: this.password })
       .subscribe(
         (response) => {
-          localStorage.setItem('token', response.token);
+          this.storageService.setItem('token', response.token);
           this.router.navigate(['/dashboard/products']);
         },
         (error) => {
