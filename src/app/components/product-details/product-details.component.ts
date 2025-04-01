@@ -4,17 +4,19 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FakestoreService } from '../../services/fakestore.service';
 import { StorageService } from '../../services/storage.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { map } from 'rxjs/operators';
 
 interface Product {
   id: number;
-  name: string;
+  title: string;
   description: string;
   price: number;
-  imageUrl: string;
+  image: string;
   category: string;
-  inStock: boolean;
-  additionalImages?: string[];
-  specifications?: { [key: string]: string };
+  rating?: {
+    rate: number;
+    count: number;
+  };
 }
 
 @Component({
@@ -28,6 +30,8 @@ export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
   selectedImage: string = '';
   relatedProducts: Product[] = [];
+  isLoading: boolean = false;
+  error: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,49 +49,53 @@ export class ProductDetailsComponent implements OnInit {
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.loadProduct(+params['id']);
+      } else {
+        this.router.navigate(['/dashboard/products']);
       }
     });
   }
 
   loadProduct(id: number) {
+    this.isLoading = true;
+    this.error = null;
+    
     this.fakestoreService.getProduct(id).subscribe({
-      next: (data) => {
-        this.product = {
-          id: data.id,
-          name: data.title,
-          imageUrl: data.image,
-          description: data.description,
-          price: data.price * 18.5, // Converting USD to ZAR (approximate rate)
-          category: data.category || 'Uncategorized',
-          inStock: true
-        };
-        this.selectedImage = this.product?.imageUrl || '';
+      next: (product: Product) => {
+        this.product = product;
+        this.selectedImage = product.image;
+        this.loadRelatedProducts(product.category);
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading product:', error);
+        this.error = 'Failed to load product details';
+        this.isLoading = false;
+        this.router.navigate(['/dashboard/products']);
       }
     });
   }
 
-  selectImage(image: string) {
-    this.selectedImage = image;
+  loadRelatedProducts(category: string) {
+    this.fakestoreService.getProducts().pipe(
+      map((products: Product[]) => products.filter(p => p.category === category))
+    ).subscribe({
+      next: (products: Product[]) => {
+        this.relatedProducts = products
+          .filter(p => p.id !== this.product?.id)
+          .slice(0, 4);
+      },
+      error: (error) => {
+        console.error('Error loading related products:', error);
+        this.relatedProducts = [];
+      }
+    });
   }
 
-  onEdit() {
-    // TODO: Implement edit functionality
-    console.log('Edit product:', this.product?.id);
+  setSelectedImage(imageUrl: string) {
+    this.selectedImage = imageUrl;
   }
 
-  onDelete() {
-    if (this.product?.id) {
-      this.fakestoreService.deleteProduct(this.product.id).subscribe({
-        next: () => {
-          this.router.navigate(['/products']);
-        },
-        error: (error) => {
-          console.error('Error deleting product:', error);
-        }
-      });
-    }
+  navigateToProduct(productId: number) {
+    this.router.navigate(['/dashboard/products', productId]);
   }
 }
